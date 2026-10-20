@@ -443,7 +443,7 @@ Public Class FormMain
             Telemetry("启动")
             '社区版启动提示（沿用开源版的启动说明弹窗机制）
             If VersionBranchMain = "OpenSource" Then
-                MyMsgBox($"这是基于 PCL 开源代码的社区修改版：游戏本体、加载器与整合包的下载安装功能已恢复。{vbCrLf}{vbCrLf}本版本暂不支持：{vbCrLf}- 微软正版登录：请使用官方版 PCL 登录并启动游戏，两个启动器可以共用同一个游戏文件夹{vbCrLf}- 启动器自动更新、联网公告、主题切换、百宝箱：开源版即未包含{vbCrLf}{vbCrLf}CurseForge 资源下载已内置 API Key，开箱即用。{vbCrLf}本程序基于 Plain Craft Launcher（作者：龙腾猫跃）二次修改，原作信息与赞助入口见“关于”页面。", "社区版说明")
+                MyMsgBox($"这是基于 PCL 开源代码的社区修改版：游戏本体、加载器与整合包的下载安装功能已恢复。{vbCrLf}{vbCrLf}本版本暂不支持：{vbCrLf}- 微软正版登录：请使用官方版 PCL 登录并启动游戏，两个启动器可以共用同一个游戏文件夹{vbCrLf}- 启动器自动更新、联网公告、主题切换、百宝箱：开源版即未包含{vbCrLf}{vbCrLf}CurseForge 资源下载已内置 API Key，开箱即用。{vbCrLf}本程序基于 Plain Craft Launcher（作者：龙腾猫跃）二次修改，原作信息与赞助入口见【关于】页面。", "社区版说明")
             End If
         End Sub, "初始化", ThreadPriority.Lowest)
 
