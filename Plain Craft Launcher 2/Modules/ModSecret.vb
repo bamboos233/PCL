@@ -181,7 +181,7 @@ Friend Module ModSecret
                     If LatestTag = CommunityBuildTag Then
                         Hint($"当前已是最新版本（{CommunityBuildTag}）！", HintType.Green)
                     ElseIf MyMsgBox($"社区版有新版本：{LatestTag}（当前：{CommunityBuildTag}）。" & vbCrLf & vbCrLf &
-                                    "点击“下载”前往发布页面，下载后覆盖旧文件即可。", "检查更新", "下载", "取消") = 1 Then
+                                    "点击【下载】前往发布页面，下载后覆盖旧文件即可。", "检查更新", "下载", "取消") = 1 Then
                         OpenWebsite(ReleaseUrl)
                     End If
                 Catch ex As Exception
