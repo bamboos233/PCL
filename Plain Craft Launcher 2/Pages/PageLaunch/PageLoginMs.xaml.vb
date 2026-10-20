@@ -65,6 +65,10 @@ Public Class PageLoginMs
     End Function
 
     Private Sub BtnLogin_Click(sender As Object, e As EventArgs) Handles BtnLogin.Click
+        If RestrictMsLogin Then
+            Hint("本版本暂时不支持微软正版登录，请使用官方版 PCL 登录并启动游戏，非常抱歉 qwq……", HintType.Red)
+            Return
+        End If
         ComboAccounts.IsEnabled = False
         BtnLogin.IsEnabled = False
         BtnLogin.Text = "0%"
