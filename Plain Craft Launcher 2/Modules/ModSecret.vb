@@ -8,14 +8,30 @@ Friend Module ModSecret
     Public Const RegFolder As String = "PCLDebug"
     '用于微软登录的 ClientId
     Public OAuthClientId As String = If(Environment.GetEnvironmentVariable("PCL_MS_CLIENT_ID"), "")
+    'CurseForge API Key：已内置（如需更换，替换下方字符串后重新构建即可；也可清空此处改用仓库 Secret CURSEFORGE_API_KEY 注入）
+    Public Const CurseForgeAPIKeyBuildIn As String = "$2a$10$TrfC6hPq6fPMUZFYLs64LOZTY448lioyOk1sw3s7f8fGKdiltRefS"
     'CurseForge API Key
-    Public CurseForgeAPIKey As String = If(Environment.GetEnvironmentVariable("PCL_CURSEFORGE_API_KEY"), "")
+    ''' <summary>
+    ''' CurseForge API Key。使用构建时注入的内置 Key（CurseForgeAPIKeyBuildIn），
+    ''' 若为空则回退到环境变量 PCL_CURSEFORGE_API_KEY（与官方开源版行为一致）。
+    ''' </summary>
+    Public ReadOnly Property CurseForgeAPIKey As String
+        Get
+            If String.IsNullOrWhiteSpace(CurseForgeAPIKeyBuildIn) Then
+                Return If(Environment.GetEnvironmentVariable("PCL_CURSEFORGE_API_KEY"), "")
+            Else
+                Return CurseForgeAPIKeyBuildIn
+            End If
+        End Get
+    End Property
     '用于匿名数据收集的腾讯云日志服务上报 URL，形如 https://{region}.cls.tencentcs.com/track?topic_id={topic_id}
     Public Const ClsBaseUrl As String = ""
 
 #Region "网络鉴权"
 
-    Public Const RestrictMcDownload As Boolean = True
+    Public Const RestrictMcDownload As Boolean = False
+    '社区版：未内置微软登录 ClientId，禁用正版登录入口（如需启用：自行申请 ClientId 注入构建，并将此项改为 False）
+    Public Const RestrictMsLogin As Boolean = True
     Friend Function SecretCdnSign(UrlWithMark As String) As String
         If Not UrlWithMark.EndsWithF("{CDN}") Then Return UrlWithMark
         Return UrlWithMark.Replace("{CDN}", "").Replace(" ", "%20")
@@ -145,8 +161,35 @@ Friend Module ModSecret
 
 #Region "更新"
 
+    '社区版配置：GitHub 仓库（"所有者/仓库名"），用于检查更新与下载页面跳转
+    Public Const CommunityRepo As String = "bamboos233/PCL"
+    '社区版配置：当前发行版标识，必须与本仓库 GitHub Release 的 tag 一致（如 community-1、community-2）
+    Public Const CommunityBuildTag As String = "community-1"
+
+    ''' <summary>
+    ''' 检查 GitHub Releases 上是否有新的社区版，若有则引导用户前往下载。不会自动替换文件。
+    ''' </summary>
     Friend Sub UpdateCheckByButton()
-        Hint("该版本中不包含更新功能……")
+        Hint("正在检查更新……")
+        RunInThread(
+            Sub()
+                Dim ReleaseUrl As String = $"https://github.com/{CommunityRepo}/releases/latest"
+                Try
+                    Dim Json As JObject = NetRequestByClientRetry($"https://api.github.com/repos/{CommunityRepo}/releases/latest", RequireJson:=True).DeserializeJson()
+                    Dim LatestTag As String = If(Json("tag_name")?.ToString(), "")
+                    If String.IsNullOrWhiteSpace(LatestTag) Then Throw New Exception("Release 信息中没有 tag_name")
+                    If LatestTag = CommunityBuildTag Then
+                        Hint($"当前已是最新版本（{CommunityBuildTag}）！", HintType.Green)
+                    ElseIf MyMsgBox($"社区版有新版本：{LatestTag}（当前：{CommunityBuildTag}）。" & vbCrLf & vbCrLf &
+                                    "点击“下载”前往发布页面，下载后覆盖旧文件即可。", "检查更新", "下载", "取消") = 1 Then
+                        OpenWebsite(ReleaseUrl)
+                    End If
+                Catch ex As Exception
+                    If MyMsgBox("检查更新失败：" & ex.Message & vbCrLf & vbCrLf & "是否手动打开发布页面查看？", "检查更新", "打开", "取消") = 1 Then
+                        OpenWebsite(ReleaseUrl)
+                    End If
+                End Try
+            End Sub)
     End Sub
 
     Friend IsUpdateWaitingRestart As Boolean = False
