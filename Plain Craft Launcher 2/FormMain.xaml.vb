@@ -11,9 +11,6 @@ Public Class FormMain
         Dim FeatureList As New List(Of KeyValuePair(Of Integer, String))
         '统计更新日志条目
         If BuildType = BuildTypes.Release Then
-            If LastVersion < 413 Then 'Release 2.99.0.0
-                FeatureList.Add(New KeyValuePair(Of Integer, String)(5, "删除：为遵守相关法律法规，PCL 暂时不再提供 MC 下载功能，非常抱歉 qwq……"))
-            End If
             If LastVersion < 411 Then 'Release 2.14.0.0
                 FeatureList.Add(New KeyValuePair(Of Integer, String)(4, "新增：允许修改、添加、移除、更新已安装版本的各个组件，可从版本设置中进入"))
                 FeatureList.Add(New KeyValuePair(Of Integer, String)(2, "优化：启动游戏时允许按 Esc 取消"))
@@ -103,9 +100,6 @@ Public Class FormMain
             '3：BUG+ IMP* FEAT-
             '2：BUG* IMP-
             '1：BUG-
-            If LastVersion < 414 Then 'Snapshot 2.99.0.0
-                FeatureList.Add(New KeyValuePair(Of Integer, String)(5, "删除：为遵守相关法律法规，PCL 暂时不再提供 MC 下载功能，非常抱歉 qwq……"))
-            End If
             If LastVersion < 412 Then 'Snapshot 2.14.0.0
                 FeatureList.Add(New KeyValuePair(Of Integer, String)(4, "新增：允许修改、添加、移除、更新已安装版本的各个组件，可从版本设置中进入"))
                 FeatureList.Add(New KeyValuePair(Of Integer, String)(2, "优化：启动游戏时允许按 Esc 取消"))
@@ -447,9 +441,9 @@ Public Class FormMain
             End Try
             '上报
             Telemetry("启动")
-            '开源版本提示
+            '社区版启动提示（沿用开源版的启动说明弹窗机制）
             If VersionBranchMain = "OpenSource" Then
-                MyMsgBox($"该版本中无法使用以下特性：{vbCrLf}- CurseForge API 调用：需要自行申请 API Key，然后添加到 ModSecret.vb 的开头{vbCrLf}- 正版登录：需要自行向微软申请 Client ID，然后添加到 ModSecret.vb 的开头{vbCrLf}- 更新与联网通知：避免滥用隐患{vbCrLf}- 主题切换：这是需要赞助解锁的纪念性质的功能，别让赞助者太伤心啦……{vbCrLf}- 百宝箱：开发早期往里面塞了些开发工具，整理起来太麻烦了……", "开源版本说明")
+                MyMsgBox($"这是基于 PCL 开源代码的社区修改版：游戏本体、加载器与整合包的下载安装功能已恢复。{vbCrLf}{vbCrLf}本版本暂不支持：{vbCrLf}- 微软正版登录：请使用官方版 PCL 登录并启动游戏，两个启动器可以共用同一个游戏文件夹{vbCrLf}- 启动器自动更新、联网公告、主题切换、百宝箱：开源版即未包含{vbCrLf}{vbCrLf}CurseForge 资源下载已内置 API Key，开箱即用。{vbCrLf}本程序基于 Plain Craft Launcher（作者：龙腾猫跃）二次修改，原作信息与赞助入口见“关于”页面。", "社区版说明")
             End If
         End Sub, "初始化", ThreadPriority.Lowest)
 
